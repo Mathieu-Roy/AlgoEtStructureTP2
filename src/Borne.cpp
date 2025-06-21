@@ -8,18 +8,21 @@
 
 #include "Borne.h"
 
+#include <stdexcept>
+
 Borne::Borne() : m_nom("") {}
 
 Borne::Borne(const std::string& p_nom) : m_nom(p_nom) {
-    // TODO: Vérifier la précondition
+    // TODO vérifier si on gère les exceptions comme ça pour ce projet
+    if (p_nom.empty()) {
+        throw std::invalid_argument("Le nom de la borne ne peut pas être vide.");
+    }
 }
 
 bool Borne::operator==(const Borne& p_autre) const {
-    // TODO: Comparer deux bornes
-    return false;
+    return m_nom == p_autre.m_nom;
 }
 
 std::string Borne::reqNom() const {
-    // TODO: Retourner le nom
-    return ""; 
+    return m_nom;
 }

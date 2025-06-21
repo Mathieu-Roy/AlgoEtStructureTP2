@@ -22,31 +22,29 @@ Trajet::Trajet(const std::string& p_origine,
 // TODO: Vérifier les préconditions
 
 bool Trajet::operator==(const Trajet& p_autre) const {
-    // TODO: Comparer deux trajets
-    return false;
+    return m_origine == p_autre.m_origine &&
+           m_destination == p_autre.m_destination &&
+           m_distance == p_autre.m_distance &&
+           m_temps == p_autre.m_temps &&
+           m_cout == p_autre.m_cout;
 }
 
 std::string Trajet::reqOrigine() const {
-    // TODO: Retourner l'origine
-    return "";
+    return m_origine;
 }
 
 std::string Trajet::reqDestination() const {
-    // TODO: Retourner la destination
-    return "";
+    return m_destination;
 }
 
 double Trajet::reqDistance() const {
-    // TODO: Retourner la distance
-    return 0.0;
+    return m_distance;
 }
 
 double Trajet::reqTemps() const {
-    // TODO: Retourner le temps
-    return 0.0;
+    return m_temps;
 }
 
 double Trajet::reqCout() const {
-    // TODO: Retourner le coût
-    return 0.0;
+    return m_cout;
 }
