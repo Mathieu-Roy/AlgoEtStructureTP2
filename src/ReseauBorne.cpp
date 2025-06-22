@@ -31,9 +31,9 @@ ReseauBorne& ReseauBorne::operator=(const ReseauBorne& p_autre)
 
 void ReseauBorne::ajouterBorne(const std::string& p_nom)
 {
-    // TODO: Ajouter une borne.
-    if (!existeBorne(p_nom)) {
-
+    if (!existeBorne(p_nom)){
+        Borne nouvelleBorne(p_nom);
+        m_adjacence.push_back(std::make_pair(nouvelleBorne,std::list<Borne>{}));
     }
 }
 
@@ -53,28 +53,11 @@ void ReseauBorne::ajouterTrajet(const std::string& p_origine, const std::string&
 
 std::vector<Borne> ReseauBorne::reqBornes() const
 {
-    std::list<Borne> toutes_Bornes;
-
-    for (const auto& paire : m_adjacence)
-    {
-        // Ajouter la clef
-        toutes_Bornes.push_back(paire.first);
-
-        // Ajouter toutes les bornes associées à la clef
-        for (const auto& borneAdj : paire.second)
-        {
-            toutes_Bornes.push_back(borneAdj);
-        }
+    std::vector<Borne> toutes_Bornes;
+    for (auto it = m_adjacence.begin(); it != m_adjacence.end(); ++it) {
+        toutes_Bornes.push_back(it->first);
     }
-
-    // Retirer les doublons
-    toutes_Bornes.sort([](const Borne &a, const Borne &b) {
-        return a.reqNom() < b.reqNom();
-    });
-    toutes_Bornes.unique();
-
-    //Transformer la liste en un vecteur et le retourner
-    return std::vector<Borne>(toutes_Bornes.begin(), toutes_Bornes.end());
+    return toutes_Bornes;
 }
 
 std::vector<Trajet> ReseauBorne::reqTrajets() const
@@ -84,14 +67,18 @@ std::vector<Trajet> ReseauBorne::reqTrajets() const
 
 std::vector<Trajet> ReseauBorne::reqTrajetsDepuis(const std::string& p_origine) const
 {
-    // TODO: Retourner les trajets depuis une borne
+    std::vector<Trajet> trajetsDepuisOrigine;
+    for (auto trajet = m_trajets.begin(); trajet != m_trajets.end(); ++trajet) {
+       if (trajet->reqOrigine()==p_origine) {
+           trajetsDepuisOrigine.push_back(*trajet);
+       }
+    }
     return {};
 }
 
 bool ReseauBorne::existeBorne(const std::string& p_nom) const
 {
     Borne borneRecherche(p_nom);
-
     for (std::vector<Borne>::iterator borne = reqBornes().begin(); borne != reqBornes().end(); ++borne) {
         if (*borne == borneRecherche) {
             return true;
