@@ -73,17 +73,24 @@ std::vector<Trajet> ReseauBorne::reqTrajetsDepuis(const std::string& p_origine) 
            trajetsDepuisOrigine.push_back(*trajet);
        }
     }
-    return {};
+    return trajetsDepuisOrigine;
 }
 
 bool ReseauBorne::existeBorne(const std::string& p_nom) const
 {
     Borne borneRecherche(p_nom);
+    for (const Borne &borne: reqBornes()) {
+        if (borne == borneRecherche) {
+            return true;
+        }
+    }
+    /*
     for (std::vector<Borne>::iterator borne = reqBornes().begin(); borne != reqBornes().end(); ++borne) {
         if (*borne == borneRecherche) {
             return true;
         }
     }
+    */
     return false;
 }
 

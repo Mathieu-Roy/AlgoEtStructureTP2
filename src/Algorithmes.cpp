@@ -13,7 +13,17 @@
 #include <limits>    // std::numeric_limits
 #include <algorithm> // std::find, std::reverse
 #include <unordered_map>
-
+/**
+ * Algo de Dijstra qui suit le pseudo code donné dans le PWPT 2 sur les graphs
+ *
+ * @param p_reseau
+ * @param p_origine
+ * @param p_destination
+ * @param p_critere
+ * @param p_chemin
+ * @param p_coutTotal
+ * @return
+ */
 bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
                            const std::string& p_origine,
                            const std::string& p_destination,
@@ -21,7 +31,7 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
                            std::vector<std::string>& p_chemin,
                            double& p_coutTotal)
 {
-    // TODO: Meilleur nom?
+
     struct MemoireBorne {
         int longeur;
         std::string predecesseur;
@@ -31,9 +41,9 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
         // 𝑑(𝑣) = +∞;
         // 𝑝(𝑣) = 𝑁𝐼𝐿;
     std::unordered_map<std::string, MemoireBorne> memoire_Borne;
-    for (auto borne = p_reseau.reqBornes().begin(); borne != p_reseau.reqBornes().end(); ++borne) {
-        memoire_Borne[borne->reqNom()].longeur = 10000;
-        memoire_Borne[borne->reqNom()].predecesseur = "";
+    for (const Borne &borne: p_reseau.reqBornes()) {
+        memoire_Borne[borne.reqNom()].longeur = 10000;
+        memoire_Borne[borne.reqNom()].predecesseur = "";
     }
 
     // 𝑑(𝑠) = 0;
@@ -46,7 +56,7 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
     //  RÉPÉTER |𝑆| FOIS
     for (int i = 0; i < memoire_Borne.size(); i++) {
         // 𝑢∗ = Le nœud 𝑢 dans 𝑄 tel que 𝑑(𝑢) est minimal
-        int min_Longeur = 0;
+        int min_Longeur = 10000;
         std::string borneEvaluee;
         for (const auto borne: bornes_non_solutionnees) {
             if (memoire_Borne[borne.reqNom()].longeur < min_Longeur) {
@@ -67,20 +77,19 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
 
         // POUR tout 𝑢 dans 𝑄 (= 𝑆 \ 𝑇) adjacent à 𝑢∗ FAIRE
         std::vector<Trajet> trajets_Depuis_Borne = p_reseau.reqTrajetsDepuis(borneEvaluee);
-        for (std::vector<Trajet>::iterator trajet = trajets_Depuis_Borne.begin(); trajet != trajets_Depuis_Borne.end(); ++trajet) {
-
+        for (Trajet& trajet : trajets_Depuis_Borne) {
             // • 𝑡𝑒𝑚𝑝 = 𝑑(𝑢∗) + 𝑤(𝑢∗, 𝑢);
             double temps_Trajet;
             switch (p_critere.type) {
                 // 1: distance, 2: temps, 3: coût
                 case 1:
-                    temps_Trajet = trajet->reqDistance();
+                    temps_Trajet = trajet.reqDistance();
                     break;
                 case 2:
-                    temps_Trajet = trajet->reqTemps();
+                    temps_Trajet = trajet.reqTemps();
                     break;
                 case 3:
-                    temps_Trajet = trajet->reqCout();
+                    temps_Trajet = trajet.reqCout();
                     break;
             }
             double temps =  memoire_Borne[borneEvaluee].longeur + temps_Trajet;
@@ -88,15 +97,33 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
             // • Si 𝑡𝑒𝑚𝑝 < 𝑑(𝑢) ALORS //relâchement pour (𝑢∗, 𝑢)
             // • 𝑑(𝑢) = 𝑡𝑒𝑚𝑝;
             // • 𝑝(𝑢) = 𝑢∗;
-            if (temps < memoire_Borne[trajet->reqDestination()].longeur) {
-                memoire_Borne[trajet->reqDestination()].longeur = temps;
-                memoire_Borne[trajet->reqDestination()].predecesseur = borneEvaluee;
+            if (temps < memoire_Borne[trajet.reqDestination()].longeur) {
+                memoire_Borne[trajet.reqDestination()].longeur = temps;
+                memoire_Borne[trajet.reqDestination()].predecesseur = borneEvaluee;
             }
         }
     }
-    // TODO, setup those and figure when to return true and false.
-    // std::vector<std::string> &p_chemin,
+
+    // Calcul des valeurs de retour si on a un chemin qui fonctionne
+    // std::vector<std::string> &p_chemin
     // double &p_coutTotal
+    if (memoire_Borne[p_destination].longeur < 10000) {
+        p_coutTotal = (memoire_Borne[p_destination].longeur);
+
+        //Pushback les prédécésseurs jusqu'à arriver à l'origine, renverser à la fin pour avoir le bon ordre
+        std::string borne_En_Cours = p_destination;
+        bool origine_trouvee = false;
+        while (!origine_trouvee){
+            p_chemin.push_back(borne_En_Cours);
+            borne_En_Cours = memoire_Borne[borne_En_Cours].predecesseur;
+            if (borne_En_Cours == p_origine) {
+                p_chemin.push_back(borne_En_Cours);
+                origine_trouvee = true;
+            }
+        } while (borne_En_Cours != p_origine);
+        std::reverse(p_chemin.begin(), p_chemin.end());
+        return true;
+    }
     return false;
 }
 
