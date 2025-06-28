@@ -127,6 +127,18 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
     return false;
 }
 
+
+/**
+ * Algo de Bellman-Ford qui suit le pseudo code donné dans le PWPT 2 sur les graphs
+ *
+ * @param p_reseau
+ * @param p_origine
+ * @param p_destination
+ * @param p_critere
+ * @param p_chemin
+ * @param p_coutTotal
+ * @return
+ */
 bool Algorithmes::bellmanFord(const ReseauBorne& p_reseau,
                               const std::string& p_origine,
                               const std::string& p_destination,
@@ -134,21 +146,73 @@ bool Algorithmes::bellmanFord(const ReseauBorne& p_reseau,
                               std::vector<std::string>& p_chemin,
                               double& p_coutTotal)
 {
-    // TODO: Implémenter Bellman-Ford.
-    /*
-• POUR tout 𝑣 dans S FAIRE //initialisation de d et p
-     𝑑(𝑣) = +∞ ; 𝑝(𝑣) = 𝑁𝐼𝐿;
-• 𝑑(𝑠) = 0;
-• RÉPÉTER |𝑆| − 1 FOIS //partie principale de l’algorithme
-     POUR tout (𝑢, 𝑣) de 𝐴 FAIRE
-         𝑡𝑒𝑚𝑝 = 𝑑(𝑢) + 𝑤(𝑢, 𝑣);
-         SI 𝑡𝑒𝑚𝑝 < 𝑑(𝑣) //relâchement pour (u.v)
-            • 𝑑(𝑣) = 𝑡𝑒𝑚𝑝; 𝑝(𝑣) = 𝑢;
-• POUR tout (𝑢, 𝑣) de 𝐴 FAIRE //vérification de l’existence d’un cycle de longueur < 0
-     Si 𝑑(𝑣) > 𝑑(𝑢) + 𝑤(𝑢, 𝑣) ALORS retourner FAUX;
-• retourner VRAI;
-• POUR tout 𝑣 dans S FAIRE //initialisation de d et p
-*/
-    return false;
+    // TODO: Tester Bellman-Ford.
+    struct MemoireBorne {
+        int longeur;
+        std::string predecesseur;
+    };
 
+    // POUR tout 𝑣 dans 𝑆 FAIRE //initialisation de 𝑑 et 𝑝
+        // 𝑑(𝑣) = +∞;
+        // 𝑝(𝑣) = 𝑁𝐼𝐿;
+    std::unordered_map<std::string, MemoireBorne> memoire_Borne;
+    for (const Borne &borne: p_reseau.reqBornes()) {
+        memoire_Borne[borne.reqNom()].longeur = 10000;
+        memoire_Borne[borne.reqNom()].predecesseur = "";
+    }
+
+    // • 𝑑(𝑠) = 0;
+    memoire_Borne[p_origine].longeur = 0;
+
+    // • RÉPÉTER |𝑆| − 1 FOIS //partie principale de l’algorithme
+    for (int i = 0; i < memoire_Borne.size() - 1; i++) {
+        //      POUR tout (𝑢, 𝑣) de 𝐴 FAIRE
+        for (Trajet &trajet: p_reseau.reqTrajets()) {
+            //          𝑡𝑒𝑚𝑝 = 𝑑(𝑢) + 𝑤(𝑢, 𝑣);
+            double temps_Trajet;
+            switch (p_critere.type) {
+                // 1: distance, 2: temps, 3: coût
+                case 1:
+                    temps_Trajet = trajet.reqDistance();
+                    break;
+                case 2:
+                    temps_Trajet = trajet.reqTemps();
+                    break;
+                case 3:
+                    temps_Trajet = trajet.reqCout();
+                    break;
+            }
+            double temps = memoire_Borne[trajet.reqOrigine()].longeur + temps_Trajet;
+
+            //          SI 𝑡𝑒𝑚𝑝 < 𝑑(𝑣) //relâchement pour (u.v)
+            //             • 𝑑(𝑣) = 𝑡𝑒𝑚𝑝; 𝑝(𝑣) = 𝑢;
+            if (temps < memoire_Borne[trajet.reqDestination()].longeur) {
+                memoire_Borne[trajet.reqDestination()].longeur = temps;
+                memoire_Borne[trajet.reqDestination()].predecesseur = trajet.reqDestination();
+            }
+        }
+    }
+
+    // • POUR tout (𝑢, 𝑣) de 𝐴 FAIRE //vérification de l’existence d’un cycle de longueur < 0
+    //      Si 𝑑(𝑣) > 𝑑(𝑢) + 𝑤(𝑢, 𝑣) ALORS retourner FAUX;
+    // • retourner VRAI;
+    for (Trajet& trajet : p_reseau.reqTrajets()) {
+        double temps_Trajet;
+        switch (p_critere.type) {
+            // 1: distance, 2: temps, 3: coût
+            case 1:
+                temps_Trajet = trajet.reqDistance();
+                break;
+            case 2:
+                temps_Trajet = trajet.reqTemps();
+                break;
+            case 3:
+                temps_Trajet = trajet.reqCout();
+                break;
+        }
+        if (memoire_Borne[trajet.reqDestination()].longeur > memoire_Borne[trajet.reqOrigine()].longeur + temps_Trajet) {
+            return false;
+        }
+    }
+    return true;
 }

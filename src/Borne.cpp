@@ -13,7 +13,6 @@
 Borne::Borne() : m_nom("") {}
 
 Borne::Borne(const std::string& p_nom) : m_nom(p_nom) {
-    // TODO vérifier si on gère les exceptions comme ça pour ce projet
     if (p_nom.empty()) {
         throw std::invalid_argument("Le nom de la borne ne peut pas être vide.");
     }

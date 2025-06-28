@@ -9,6 +9,7 @@
 #include "ReseauBorne.h"
 #include <iostream>
 #include <iomanip>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -141,5 +142,23 @@ void ReseauBorne::afficherReseau() const
 
 void ReseauBorne::verifieInvariant() const
 {
-    // TODO : Vérifier les invariants du graphe.
+    // TODO mieux comprendre et refaire ça, généré
+
+    std::set<std::string> nomsBornes;
+    for (const auto& paire : m_adjacence) {
+        const std::string& nom = paire.first.reqNom();
+        INVARIANT(nomsBornes.find(nom) == nomsBornes.end());
+        nomsBornes.insert(nom);
+    }
+
+    for (const auto& trajet : m_trajets) {
+        INVARIANT(nomsBornes.find(trajet.reqOrigine()) != nomsBornes.end());
+        INVARIANT(nomsBornes.find(trajet.reqDestination()) != nomsBornes.end());
+    }
+
+    std::set<Trajet> trajetsUniques;
+    for (const auto& trajet : m_trajets) {
+        INVARIANT(trajetsUniques.find(trajet) == trajetsUniques.end());
+        trajetsUniques.insert(trajet);
+    }
 }
