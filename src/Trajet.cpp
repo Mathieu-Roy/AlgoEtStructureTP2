@@ -25,7 +25,6 @@ Trajet::Trajet(const std::string& p_origine,
     PRECONDITION(!p_destination.empty());
     PRECONDITION(p_distance >= 0);
     PRECONDITION(p_temps >= 0);
-    PRECONDITION(p_cout >= 0);
     PRECONDITION(p_origine != p_destination);
 }
 

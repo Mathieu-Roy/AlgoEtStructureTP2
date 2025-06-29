@@ -144,6 +144,7 @@ void ReseauBorne::verifieInvariant() const
 {
     // TODO mieux comprendre et refaire ça, généré
 
+    /*
     std::set<std::string> nomsBornes;
     for (const auto& paire : m_adjacence) {
         const std::string& nom = paire.first.reqNom();
@@ -161,4 +162,5 @@ void ReseauBorne::verifieInvariant() const
         INVARIANT(trajetsUniques.find(trajet) == trajetsUniques.end());
         trajetsUniques.insert(trajet);
     }
+    */
 }

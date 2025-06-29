@@ -8,6 +8,7 @@
 
 class Algorithmes {
 public:
+    static constexpr double INF = 1e9;
     static bool dijkstra(const ReseauBorne& p_reseau,
                          const std::string& p_origine,
                          const std::string& p_destination,

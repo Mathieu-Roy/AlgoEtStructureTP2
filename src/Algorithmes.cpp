@@ -33,7 +33,7 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
 {
 
     struct MemoireBorne {
-        int longeur;
+        double longeur;
         std::string predecesseur;
     };
 
@@ -42,7 +42,7 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
         // 𝑝(𝑣) = 𝑁𝐼𝐿;
     std::unordered_map<std::string, MemoireBorne> memoire_Borne;
     for (const Borne &borne: p_reseau.reqBornes()) {
-        memoire_Borne[borne.reqNom()].longeur = 10000;
+        memoire_Borne[borne.reqNom()].longeur = INF;
         memoire_Borne[borne.reqNom()].predecesseur = "";
     }
 
@@ -56,7 +56,7 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
     //  RÉPÉTER |𝑆| FOIS
     for (int i = 0; i < memoire_Borne.size(); i++) {
         // 𝑢∗ = Le nœud 𝑢 dans 𝑄 tel que 𝑑(𝑢) est minimal
-        int min_Longeur = 10000;
+        int min_Longeur = INF;
         std::string borneEvaluee;
         for (const auto borne: bornes_non_solutionnees) {
             if (memoire_Borne[borne.reqNom()].longeur < min_Longeur) {
@@ -107,7 +107,7 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
     // Calcul des valeurs de retour si on a un chemin qui fonctionne
     // std::vector<std::string> &p_chemin
     // double &p_coutTotal
-    if (memoire_Borne[p_destination].longeur < 10000) {
+    if (memoire_Borne[p_destination].longeur < INF) {
         p_coutTotal = (memoire_Borne[p_destination].longeur);
 
         //Pushback les prédécésseurs jusqu'à arriver à l'origine, renverser à la fin pour avoir le bon ordre
@@ -146,9 +146,8 @@ bool Algorithmes::bellmanFord(const ReseauBorne& p_reseau,
                               std::vector<std::string>& p_chemin,
                               double& p_coutTotal)
 {
-    // TODO: Tester Bellman-Ford.
     struct MemoireBorne {
-        int longeur;
+        double longeur;
         std::string predecesseur;
     };
 
@@ -157,7 +156,7 @@ bool Algorithmes::bellmanFord(const ReseauBorne& p_reseau,
         // 𝑝(𝑣) = 𝑁𝐼𝐿;
     std::unordered_map<std::string, MemoireBorne> memoire_Borne;
     for (const Borne &borne: p_reseau.reqBornes()) {
-        memoire_Borne[borne.reqNom()].longeur = 10000;
+        memoire_Borne[borne.reqNom()].longeur = INF;
         memoire_Borne[borne.reqNom()].predecesseur = "";
     }
 
@@ -188,7 +187,7 @@ bool Algorithmes::bellmanFord(const ReseauBorne& p_reseau,
             //             • 𝑑(𝑣) = 𝑡𝑒𝑚𝑝; 𝑝(𝑣) = 𝑢;
             if (temps < memoire_Borne[trajet.reqDestination()].longeur) {
                 memoire_Borne[trajet.reqDestination()].longeur = temps;
-                memoire_Borne[trajet.reqDestination()].predecesseur = trajet.reqDestination();
+                memoire_Borne[trajet.reqDestination()].predecesseur = trajet.reqOrigine();
             }
         }
     }
@@ -214,5 +213,27 @@ bool Algorithmes::bellmanFord(const ReseauBorne& p_reseau,
             return false;
         }
     }
+
+    // Calcul des valeurs de retour si on a un chemin qui fonctionne
+    // std::vector<std::string> &p_chemin
+    // double &p_coutTotal
+    if (memoire_Borne[p_destination].longeur < INF) {
+        p_coutTotal = (memoire_Borne[p_destination].longeur);
+
+        //Pushback les prédécésseurs jusqu'à arriver à l'origine, renverser à la fin pour avoir le bon ordre
+        std::string borne_En_Cours = p_destination;
+        bool origine_trouvee = false;
+        while (!origine_trouvee){
+            p_chemin.push_back(borne_En_Cours);
+            borne_En_Cours = memoire_Borne[borne_En_Cours].predecesseur;
+            if (borne_En_Cours == p_origine) {
+                p_chemin.push_back(borne_En_Cours);
+                origine_trouvee = true;
+            }
+        } while (borne_En_Cours != p_origine);
+        std::reverse(p_chemin.begin(), p_chemin.end());
+        return true;
+    }
+
     return true;
 }
