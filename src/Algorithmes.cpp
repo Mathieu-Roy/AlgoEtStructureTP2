@@ -9,21 +9,22 @@
 
 #include "Algorithmes.h"
 #include <vector>
-#include <queue>     // file de priorité pour Dijkstra
+// je n'ai pas utilisé les limites car j'avais des comportements un peu aléatoires
 #include <limits>    // std::numeric_limits
 #include <algorithm> // std::find, std::reverse
 #include <unordered_map>
 /**
  * Algo de Dijstra qui suit le pseudo code donné dans le PWPT 2 sur les graphs
  *
- * @param p_reseau
- * @param p_origine
- * @param p_destination
- * @param p_critere
- * @param p_chemin
- * @param p_coutTotal
- * @return
+ * @param p_reseau Le réseau de bornes et trajets
+ * @param p_origine Le nom de la borne d'origine.
+ * @param p_destination Le nom de la borne de destination.
+ * @param p_critere Le critère de recherche : 1 pour distance, 2 pour temps, 3 pour coût.
+ * @param p_chemin Vecteur retourné contenant la suite des bornes formant le plus court chemin trouvé.
+ * @param p_coutTotal coût total du chemin trouvé selon le critère choisi, retouré en référence.
+ * @return true si un chemin a été trouvé, false sinon.
  */
+
 bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
                            const std::string& p_origine,
                            const std::string& p_destination,
@@ -131,13 +132,13 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
 /**
  * Algo de Bellman-Ford qui suit le pseudo code donné dans le PWPT 2 sur les graphs
  *
- * @param p_reseau
- * @param p_origine
- * @param p_destination
- * @param p_critere
- * @param p_chemin
- * @param p_coutTotal
- * @return
+ * @param p_reseau Le réseau de bornes et trajets
+ * @param p_origine Le nom de la borne d'origine.
+ * @param p_destination Le nom de la borne de destination.
+ * @param p_critere Le critère de recherche : 1 pour distance, 2 pour temps, 3 pour coût.
+ * @param p_chemin Vecteur retourné contenant la suite des bornes formant le plus court chemin trouvé.
+ * @param p_coutTotal coût total du chemin trouvé selon le critère choisi, retouré en référence.
+ * @return true si un chemin a été trouvé, false sinon.
  */
 bool Algorithmes::bellmanFord(const ReseauBorne& p_reseau,
                               const std::string& p_origine,

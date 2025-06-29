@@ -19,8 +19,12 @@ ReseauBorne::ReseauBorne()
     // Constructeur par défaut, initialise un réseau vide
 }
 
-/* ReseauBorne::ReseauBorne(const ReseauBorne& p_autre) {} */
-
+/**
+ * Constructeur de copie du réseau de bornes
+ *
+ * @param p_autre le réseau de bornes à copier
+ * @return la copie du réseau de borne entré
+ */
 ReseauBorne& ReseauBorne::operator=(const ReseauBorne& p_autre)
 {
     if (this != &p_autre) {
@@ -30,6 +34,11 @@ ReseauBorne& ReseauBorne::operator=(const ReseauBorne& p_autre)
     return *this;
 }
 
+/**
+ * Ajouteur de borne au réseau
+ *
+ * @param p_nom le nom de la borne à ajouter
+ */
 void ReseauBorne::ajouterBorne(const std::string& p_nom)
 {
     if (!existeBorne(p_nom)){
@@ -38,6 +47,15 @@ void ReseauBorne::ajouterBorne(const std::string& p_nom)
     }
 }
 
+/**
+ * Ajouteur de trajet au réseau de borne
+ *
+ * @param p_origine le nom de la borne d'origine
+ * @param p_destination le nom de la borne de destination
+ * @param p_distance la distance du trajet
+ * @param p_temps le temps du trajet
+ * @param p_cout le coût du trajet
+ */
 void ReseauBorne::ajouterTrajet(const std::string& p_origine, const std::string& p_destination,
                                 double p_distance, double p_temps, double p_cout)
 {
@@ -52,6 +70,11 @@ void ReseauBorne::ajouterTrajet(const std::string& p_origine, const std::string&
     m_trajets.push_back(nouveau_trajet);
 }
 
+/**
+ * Retourne l'ensembe des bornes du réseau, en vecteur
+ *
+ * @return un vecteur de bornes
+ */
 std::vector<Borne> ReseauBorne::reqBornes() const
 {
     std::vector<Borne> toutes_Bornes;
@@ -61,11 +84,21 @@ std::vector<Borne> ReseauBorne::reqBornes() const
     return toutes_Bornes;
 }
 
+/**
+ * Retourne l'ensembe des trajets du réseau, en vecteur
+ *
+ * @return un vecteur de trajets
+ */
 std::vector<Trajet> ReseauBorne::reqTrajets() const
 {
     return m_trajets;
 }
 
+/**
+ * Retourne l'ensembe des trajets depuis une borne (origine) du réseau, en vecteur
+ *
+ * @return un vecteur de trajets
+ */
 std::vector<Trajet> ReseauBorne::reqTrajetsDepuis(const std::string& p_origine) const
 {
     std::vector<Trajet> trajetsDepuisOrigine;
@@ -77,6 +110,12 @@ std::vector<Trajet> ReseauBorne::reqTrajetsDepuis(const std::string& p_origine) 
     return trajetsDepuisOrigine;
 }
 
+/**
+ * Vérificateur si une borne existe dans le réseau de bornes
+ *
+ * @param p_nom le nom de la borne à vérifier
+ * @return true si la borne est dans le réseau, false sinon
+ */
 bool ReseauBorne::existeBorne(const std::string& p_nom) const
 {
     Borne borneRecherche(p_nom);
@@ -85,13 +124,6 @@ bool ReseauBorne::existeBorne(const std::string& p_nom) const
             return true;
         }
     }
-    /*
-    for (std::vector<Borne>::iterator borne = reqBornes().begin(); borne != reqBornes().end(); ++borne) {
-        if (*borne == borneRecherche) {
-            return true;
-        }
-    }
-    */
     return false;
 }
 
@@ -140,6 +172,10 @@ void ReseauBorne::afficherReseau() const
     std::cout << "==========================================\n" << std::endl;
 }
 
+
+/**
+ * Vérificatuer de le réseau reste invariant pour la théorie du contrat
+ */
 void ReseauBorne::verifieInvariant() const
 {
     // TODO mieux comprendre et refaire ça, généré
@@ -157,7 +193,7 @@ void ReseauBorne::verifieInvariant() const
         INVARIANT(nomsBornes.find(trajet.reqDestination()) != nomsBornes.end());
     }
 
-    std::set<Trajet> trajetsUniques;
+    std::list<Trajet> trajetsUniques;
     for (const auto& trajet : m_trajets) {
         INVARIANT(trajetsUniques.find(trajet) == trajetsUniques.end());
         trajetsUniques.insert(trajet);
