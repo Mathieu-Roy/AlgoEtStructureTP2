@@ -82,15 +82,12 @@ bool Algorithmes::dijkstra(const ReseauBorne& p_reseau,
             // • 𝑡𝑒𝑚𝑝 = 𝑑(𝑢∗) + 𝑤(𝑢∗, 𝑢);
             double temps_Trajet;
             switch (p_critere.type) {
-                // 1: distance, 2: temps, 3: coût
+                // 1: distance, 2: temps, 3: coût n'est pas accepté car peut être négatif
                 case 1:
                     temps_Trajet = trajet.reqDistance();
                     break;
                 case 2:
                     temps_Trajet = trajet.reqTemps();
-                    break;
-                case 3:
-                    temps_Trajet = trajet.reqCout();
                     break;
             }
             double temps =  memoire_Borne[borneEvaluee].longeur + temps_Trajet;

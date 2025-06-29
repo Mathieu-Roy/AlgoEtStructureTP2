@@ -178,25 +178,28 @@ void ReseauBorne::afficherReseau() const
  */
 void ReseauBorne::verifieInvariant() const
 {
-    // TODO mieux comprendre et refaire ça, généré
-
-    /*
-    std::set<std::string> nomsBornes;
-    for (const auto& paire : m_adjacence) {
-        const std::string& nom = paire.first.reqNom();
-        INVARIANT(nomsBornes.find(nom) == nomsBornes.end());
-        nomsBornes.insert(nom);
+    // Vérifie que la borne n'est pas déjà présente
+    std::vector<std::string> nomsBornes;
+    for (const auto& borne : reqBornes()) {
+        const std::string& nom = borne.reqNom();
+        for (const auto& existant : nomsBornes) {
+            INVARIANT(nom != existant);
+        }
+        nomsBornes.push_back(nom);
     }
 
-    for (const auto& trajet : m_trajets) {
-        INVARIANT(nomsBornes.find(trajet.reqOrigine()) != nomsBornes.end());
-        INVARIANT(nomsBornes.find(trajet.reqDestination()) != nomsBornes.end());
+    // Vérifie que les origines et destinations
+    auto trajets = reqTrajets();
+    for (const auto& trajet : trajets) {
+        INVARIANT(existeBorne(trajet.reqOrigine()));
+        INVARIANT(existeBorne(trajet.reqDestination()));
     }
 
-    std::list<Trajet> trajetsUniques;
-    for (const auto& trajet : m_trajets) {
-        INVARIANT(trajetsUniques.find(trajet) == trajetsUniques.end());
-        trajetsUniques.insert(trajet);
+    // Vérifie qu'il n'y a pas de doublons de trajets
+    for (int i = 0; i < trajets.size(); ++i) {
+        for (int j = i + 1; j < trajets.size(); ++j) {
+            INVARIANT(!(trajets[i] == trajets[j]));
+        }
     }
-    */
+
 }
